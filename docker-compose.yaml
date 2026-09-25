@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: ticketo-postgres
+    environment:
+      POSTGRES_DB: ticketo
+      POSTGRES_USER: ticketo
+      POSTGRES_PASSWORD: ticketo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ticketo -d ticketo" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres_data:
