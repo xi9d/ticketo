@@ -8,6 +8,11 @@ plugins {
     java
 
 }
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 tasks.register("assertNoFramework") {
     val classpath = configurations.named("compileClasspath")
     doLast {

@@ -1,8 +1,8 @@
 plugins {
     java
     alias(libs.plugins.spring.boot)
-    id("org.springframework.boot")
-    id("io.spring.dependency-management")
+//    id("org.springframework.boot")
+//    id("io.spring.dependency-management")
 }
 dependencies {
     implementation(platform(libs.spring.boot.bom))
