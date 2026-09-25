@@ -6,6 +6,7 @@
 // signal to stop and ask whether it belongs behind a port instead.
 plugins {
     java
+
 }
 tasks.register("assertNoFramework") {
     val classpath = configurations.named("compileClasspath")
