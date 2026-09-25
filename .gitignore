@@ -1,0 +1,52 @@
+ # --- Build output ---
+build/
+out/
+bin/
+!gradle/wrapper/gradle-wrapper.jar
+
+# --- Gradle ---
+.gradle/
+gradle-app.setting
+.gradletasknamecache
+
+# --- IDE ---
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Logs and local runtime ---
+*.log
+logs/
+*.pid
+*.hprof
+
+# --- Secrets and local overrides ---
+.env
+.env.*
+!.env.example
+**/application-local.yml
+**/application-secrets.yml
+*.p12
+*.jks
+*.pem
+
+# --- Local data volumes (from docker-compose, TIX-004) ---
+.data/
+pgdata/
+
+# --- Profiling and load-test scratch (see note below) ---
+/tmp-profiling/
+*.jfr
+*.collapsed
+*.html.flamegraph
+!docs/evidence/**
