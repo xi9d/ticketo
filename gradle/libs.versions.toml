@@ -1,0 +1,12 @@
+[versions]
+springBoot = "4.1.1"
+junit      = "5.11.4"
+assertj    = "3.27.0"
+
+[libraries]
+spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "springBoot" }
+junit-bom       = { module = "org.junit:junit-bom", version.ref = "junit" }
+assertj         = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
