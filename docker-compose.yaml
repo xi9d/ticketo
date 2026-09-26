@@ -1,4 +1,5 @@
 services:
+#  postgres for data storage
   postgres:
     image: postgres:latest
     container_name: ticketo-postgres
@@ -15,6 +16,87 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+#  kafka for messaging
+  kafka:
+    image: apache/kafka:3.9.0
+    container_name: ticketo-kafka
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+
+      KAFKA_LISTENERS: INTERNAL://:9092,EXTERNAL://:29092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    healthcheck:
+      test: [ "CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 >/dev/null 2>&1 || exit 1" ]
+      interval: 30s
+      timeout: 20s
+      retries: 5
+      start_period: 45s
+#  keycloak is a login server:handles, username,password,tokens
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.7
+    container_name: ticketo-keycloak
+    profiles: [ "auth" ]
+    command: [ "start-dev", "--import-realm" ]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./docker/keycloak:/opt/keycloak/data/import
+
+#    stores: requests count, latencies, jvm memory, connection pool usage (/actuator/prometheus
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    container_name: ticketo-prometheus
+    profiles: [ "observability" ]
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+# grafana makes information coming from prometheus to have graphs that just numbers
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: ticketo-grafana
+    profiles: [ "observability" ]
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+# jaeger used for distributed tracing and this allows to understand which point in the application is slow
+  jaeger:
+    image: jaegertracing/all-in-one:1.62.0
+    container_name: ticketo-jaeger
+    profiles: [ "observability" ]
+    ports:
+      - "16686:16686"   # UI
+      - "4317:4317"     # OTLP gRPC
+      - "4318:4318"     # OTLP HTTP
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
 
 volumes:
   postgres_data:
+  grafana_data:
