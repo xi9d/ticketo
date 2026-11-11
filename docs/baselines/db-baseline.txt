@@ -1,0 +1,33 @@
+--- Q1 upcoming events list
+------------------------------------------------------------------------------------------------------------------
+         ->  Seq Scan on events  (cost=0.00..7.50 rows=49 width=33) (actual time=0.011..0.041 rows=50.00 loops=1)
+ Execution Time: 0.121 ms
+--- Q2 seat map for one event
+----------------------------------------------------------------------------------------------------------------------------------
+   ->  Bitmap Index Scan on idx_seats_event  (cost=0.00..27.39 rows=1995 width=0) (actual time=0.526..0.526 rows=2000.00 loops=1)
+ Execution Time: 8.774 ms
+--- Q3 availability summary for one event
+----------------------------------------------------------------------------------------------------------------------------------------
+         ->  Bitmap Index Scan on idx_seats_event  (cost=0.00..27.39 rows=1995 width=0) (actual time=0.386..0.386 rows=2000.00 loops=1)
+ Execution Time: 2.789 ms
+--- Q4 order history for one customer
+---------------------------------------------------------------------------------------------------------------------------------------------
+               ->  Bitmap Index Scan on idx_orders_customer  (cost=0.00..4.50 rows=11 width=0) (actual time=0.012..0.012 rows=12.00 loops=1)
+ Execution Time: 0.080 ms
+--- Q5 order history with items (the N+1 shape, as one join)
+------------------------------------------------------------------------------------------------------------------------------------------
+         ->  Bitmap Index Scan on idx_orders_customer  (cost=0.00..4.50 rows=11 width=0) (actual time=0.006..0.006 rows=12.00 loops=1)
+   ->  Index Scan using idx_items_order on order_items i  (cost=0.42..8.44 rows=1 width=20) (actual time=0.008..0.008 rows=1.00 loops=12)
+ Execution Time: 0.144 ms
+--- Q6 offset pagination, deep page (this will hurt in TIX-209)
+-----------------------------------------------------------------------------------------------------------------------------------------------
+               ->  Bitmap Index Scan on idx_orders_event  (cost=0.00..23.29 rows=1982 width=0) (actual time=0.397..0.397 rows=2000.00 loops=1)
+ Execution Time: 3.891 ms
+--- Q7 revenue per event (full scan)
+---------------------------------------------------------------------------------------------------------------------------------------------------
+                     ->  Parallel Seq Scan on orders  (cost=0.00..7305.17 rows=198417 width=16) (actual time=0.019..44.232 rows=158348.00 loops=3)
+ Execution Time: 110.206 ms
+--- Q8 unindexed filter
+----------------------------------------------------------------------------------------------------------------------------------------
+               ->  Parallel Seq Scan on orders  (cost=0.00..8867.67 rows=9916 width=0) (actual time=0.028..38.098 rows=8318.67 loops=3)
+ Execution Time: 49.798 ms
