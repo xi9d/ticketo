@@ -26,4 +26,4 @@ ps:
 	docker compose ps --all
 
 seed:
-	docker compose exec -T postgres psql -U ticketo -d ticketo < scripts/seed.sql
+	docker compose exec -T postgres psql -U ticketo -d ticketo -v ON_ERROR_STOP=1 < docker/postgres/seed/seed.sql

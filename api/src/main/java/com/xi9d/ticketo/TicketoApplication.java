@@ -8,6 +8,7 @@ public class TicketoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TicketoApplication.class, args);
+		
 	}
 
 }

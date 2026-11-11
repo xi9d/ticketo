@@ -16,6 +16,9 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+
+      
 #  kafka for messaging
   kafka:
     image: apache/kafka:3.9.0
