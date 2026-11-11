@@ -50,3 +50,6 @@ pgdata/
 *.collapsed
 *.html.flamegraph
 !docs/evidence/**
+
+# --- Baseline raw output (the README summary is committed) ---
+docs/baselines/*.txt

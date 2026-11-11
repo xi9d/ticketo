@@ -29,6 +29,4 @@ seed:
 	docker compose exec -T postgres psql -U ticketo -d ticketo -v ON_ERROR_STOP=1 < docker/postgres/seed/seed.sql
 
 baseline:
-	@mkdir -p docs/baselines
-	docker compose exec -T postgres psql -U ticketo -d ticketo -f - < docker/postgres/baseline.sql \
-	  | grep -E '^---|Execution Time|Seq Scan|Index.*Scan' | tee docs/baselines/db-baseline.txt
+	bash ./scripts/baseline.sh $(LABEL)
