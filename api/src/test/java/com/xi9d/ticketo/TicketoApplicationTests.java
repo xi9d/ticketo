@@ -8,6 +8,7 @@ class TicketoApplicationTests {
 
 	@Test
 	void contextLoads() {
+		org.junit.jupiter.api.Assertions.fail("proving CI goes red");
 	}
 
 }
