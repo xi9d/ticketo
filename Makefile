@@ -1,4 +1,4 @@
-.PHONY: up obs auth all down reset logs ps seed
+.PHONY: up obs auth all down reset logs ps seed verify-seed baseline
 
 up:
 	docker compose up -d --wait
@@ -18,6 +18,7 @@ down:
 reset:
 	docker compose down -v
 	docker compose up -d --wait
+	$(MAKE) seed verify-seed
 
 logs:
 	docker compose logs -f
@@ -27,6 +28,9 @@ ps:
 
 seed:
 	docker compose exec -T postgres psql -U ticketo -d ticketo -v ON_ERROR_STOP=1 < docker/postgres/seed/seed.sql
+
+verify-seed:
+	docker compose exec -T postgres psql -U ticketo -d ticketo -v ON_ERROR_STOP=1 < docker/postgres/seed/verify.sql
 
 baseline:
 	bash ./scripts/baseline.sh $(LABEL)
