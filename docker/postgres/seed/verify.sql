@@ -10,7 +10,13 @@ BEGIN
   IF (SELECT count(*) FROM orders)      <> 500000 THEN RAISE EXCEPTION 'orders count wrong';      END IF;
   IF (SELECT count(*) FROM order_items) <> 500000 THEN RAISE EXCEPTION 'order_items count wrong'; END IF;
 
-  -- every order item's seat belongs to the order's event
+
+
+
+
+
+
+  -- every order item's seat belongs to the order's events
   SELECT count(*) INTO bad
   FROM order_items i
   JOIN orders o ON o.id = i.order_id
